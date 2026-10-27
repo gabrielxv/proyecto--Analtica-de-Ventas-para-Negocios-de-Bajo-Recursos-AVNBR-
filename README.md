@@ -15,7 +15,11 @@ Flujo de capas: UI -> Controller -> Service -> Repository -> Database.
 
 ## Estado de integración
 
-El módulo de productos/inventario está integrado en main. En esta rama se incorpora la implementación del Desarrollador 2 para clientes, ventas, detalles de venta y analítica, pendiente de revisión mediante pull request y de confirmar el resultado de CI.
+- El módulo de productos/inventario está integrado en `main`.
+- El módulo del Desarrollador 2 (clientes, ventas, detalles de venta y analítica) también está integrado en `main` mediante el PR #5.
+- La integración de arquitectura, persistencia y productos/inventario se recuperó mediante el PR #4.
+- La ejecución de CI asociada a la integración del Desarrollador 2 terminó correctamente.
+- La integración de código y la verificación automatizada están completadas. Antes de dar el proyecto por finalizado, se recomienda una revisión funcional de extremo a extremo y confirmar con el equipo los criterios finales de aceptación.
 
 ## Documentación
 
