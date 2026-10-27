@@ -15,7 +15,7 @@ Flujo de capas: UI -> Controller -> Service -> Repository -> Database.
 
 ## Estado de integración
 
-La recuperación del módulo de productos/inventario se presenta mediante el PR de esta rama. Clientes, ventas y analítica requieren integrar la implementación real del Desarrollador 2; sus borradores documentales no equivalen a código funcional.
+El módulo de productos/inventario está integrado en main. En esta rama se incorpora la implementación del Desarrollador 2 para clientes, ventas, detalles de venta y analítica, pendiente de revisión mediante pull request y de confirmar el resultado de CI.
 
 ## Documentación
 
@@ -23,4 +23,5 @@ La recuperación del módulo de productos/inventario se presenta mediante el PR 
 - [Contrato de integración](docs/INTEGRATION_CONTRACT.md)
 - [Normas Clean Code](docs/CLEAN_CODE.md)
 - [Implementación del Desarrollador 1](docs/DEV1_IMPLEMENTATION.md)
+- [Implementación del Desarrollador 2](docs/DEVELOPER_2_IMPLEMENTATION.md)
 - [Recuperación y persistencia](docs/RECOVERY_AND_PERSISTENCE.md)
