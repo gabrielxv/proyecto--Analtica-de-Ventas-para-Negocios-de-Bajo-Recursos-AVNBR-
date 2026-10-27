@@ -1,0 +1,27 @@
+name: Java CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - dev1-productos-inventario
+      - leader/clean-code
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Compile and run tests
+        run: mvn --batch-mode --no-transfer-progress clean verify
