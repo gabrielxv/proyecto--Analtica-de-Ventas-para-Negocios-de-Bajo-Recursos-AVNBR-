@@ -56,6 +56,31 @@ public class ProductService {
         return quantity > 0 && product.getStock() >= quantity;
     }
 
+    public Product registerStockEntry(Long productId, int quantity) {
+        Product product = findProductById(productId);
+        inventory.registerEntry(product, quantity);
+        return productRepository.save(product);
+    }
+
+    public Product registerStockExit(Long productId, int quantity) {
+        Product product = findProductById(productId);
+        inventory.registerExit(product, quantity);
+        return productRepository.save(product);
+    }
+
+    public boolean hasLowStock(Long productId) {
+        return inventory.hasLowStock(findProductById(productId));
+    }
+
+    public List<Product> findLowStockProducts() {
+        return productRepository.findAll().stream()
+                .filter(inventory::hasLowStock)
+                .toList();
+    }
+
+    private final com.negocio.analitica.model.Inventory inventory =
+            new com.negocio.analitica.model.Inventory();
+
     private Category findExistingCategory(Category category) {
         if (category == null || category.getId() == null) {
             throw new IllegalArgumentException("A valid category is required.");
