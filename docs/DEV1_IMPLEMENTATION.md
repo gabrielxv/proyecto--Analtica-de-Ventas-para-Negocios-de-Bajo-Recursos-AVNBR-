@@ -19,7 +19,7 @@ El borrador se utiliza como punto de partida, no como una especificación inmuta
 | `ProductoService` | `ProductService` | Service | Implementada |
 | `ProductoController` | `ProductController` | Controller | Implementada |
 
-La estructura de paquetes utilizada es `com.negocio.analitica`, con subpaquetes `model`, `repository`, `service` y `controller`. La persistencia concreta todavía no se ha seleccionado.
+La estructura de paquetes utilizada es `com.negocio.analitica`, con subpaquetes `model`, `repository`, `service` y `controller`. También se añadieron adaptadores `InMemoryCategoryRepository` e `InMemoryProductRepository` para ejecutar el módulo sin base de datos; los datos se pierden al cerrar el programa.
 
 ## 3. Model
 
@@ -123,7 +123,7 @@ Las operaciones validan que la categoría no sea nula y que el nombre no esté v
 - Buscar un producto por ID.
 - Listar productos.
 - Eliminar un producto.
-- `hasAvailability(...)`: consultar si hay existencias suficientes para una cantidad.
+- `hasAvailability(...)`: consultar si hay existencias suficientes para una cantidad.\n- `registerStockEntry(Long productId, int quantity)`: registrar una entrada de stock por ID y guardar el producto actualizado.\n- `registerStockExit(Long productId, int quantity)`: registrar una salida de stock por ID y guardar el producto actualizado.\n- `hasLowStock(Long productId)`: comprobar si un producto está en su mínimo o por debajo.\n- `findLowStockProducts()`: listar los productos con stock bajo.
 
 **Validaciones añadidas:**
 - El producto no puede ser nulo.
@@ -136,7 +136,7 @@ Las operaciones validan que la categoría no sea nula y que el nombre no esté v
 
 ## 6. Controller
 
-### `ProductController`
+### `CategoryController`\n\n**Responsabilidad:** delegar en `CategoryService` las operaciones `createCategory`, `updateCategory`, `getCategory`, `getAllCategories` y `deleteCategory`.\n\n### `ProductController`
 
 **Responsabilidad:** recibir llamadas relacionadas con productos y delegar el trabajo en `ProductService`.
 
@@ -183,7 +183,7 @@ La integración desde ventas debe coordinarse con el Desarrollador 2 y el líder
 4. Se concretaron operaciones de creación, actualización, consulta, listado y eliminación en los servicios.
 5. Se añadieron validaciones de nombre, precio, stock, stock mínimo y categoría existente.
 6. Se añadieron operaciones de inventario para registrar entradas, registrar salidas y detectar stock bajo.
-7. Se implementó `ProductController` para delegar operaciones al servicio de productos.
+7. Se implementaron `CategoryController` y `ProductController` para delegar las operaciones de sus respectivos servicios.\n8. Se añadieron operaciones de stock al `ProductService` para registrar entradas y salidas y consultar productos con stock bajo.\n9. Se reemplazó la demostración fija de `Application` por un menú interactivo de consola con opciones para gestionar categorías, productos e inventario.
 
 ## 9. Estado actual y pendientes
 
@@ -200,7 +200,7 @@ La integración desde ventas debe coordinarse con el Desarrollador 2 y el líder
 
 ### Pendiente
 - [ ] Implementar la persistencia concreta y conectar los repositories a la base de datos elegida por el equipo.
-- [ ] Compilar el proyecto y resolver posibles errores de integración.
+- [ ] Compilar el proyecto y resolver posibles errores de integración.\n- [ ] Añadir y ejecutar pruebas automatizadas para los métodos nuevos y las opciones del menú.
 - [ ] Añadir y ejecutar pruebas para validaciones, CRUD, entradas/salidas de stock y stock bajo.
 - [ ] Acordar con el líder el contrato que utilizará el módulo de ventas para consultar disponibilidad y actualizar existencias.
 - [ ] Revisar si el inventario debe continuar como lógica asociada a `Product` o convertirse en una entidad independiente.
