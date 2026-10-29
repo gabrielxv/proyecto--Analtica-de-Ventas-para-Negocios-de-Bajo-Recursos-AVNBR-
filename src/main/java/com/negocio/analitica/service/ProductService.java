@@ -1,6 +1,7 @@
 package com.negocio.analitica.service;
 
 import com.negocio.analitica.model.Category;
+import com.negocio.analitica.model.Inventory;
 import com.negocio.analitica.model.Product;
 import com.negocio.analitica.repository.CategoryRepository;
 import com.negocio.analitica.repository.ProductRepository;
@@ -9,6 +10,7 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final Inventory inventory = new Inventory();
 
     public ProductService(ProductRepository productRepository,
                           CategoryRepository categoryRepository) {
@@ -77,9 +79,6 @@ public class ProductService {
                 .filter(inventory::hasLowStock)
                 .toList();
     }
-
-    private final com.negocio.analitica.model.Inventory inventory =
-            new com.negocio.analitica.model.Inventory();
 
     private Category findExistingCategory(Category category) {
         if (category == null || category.getId() == null) {
