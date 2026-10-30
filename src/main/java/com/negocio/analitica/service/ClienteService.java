@@ -4,7 +4,7 @@ import com.negocio.analitica.model.Cliente;
 import com.negocio.analitica.repository.ClienteRepository;
 import java.util.List;
 
-public class ClienteService {
+public class ClienteService implements ClienteLookup {
     private final ClienteRepository repository;
     public ClienteService(ClienteRepository repository) {
         if (repository == null) throw new IllegalArgumentException("ClienteRepository cannot be null.");
