@@ -53,6 +53,53 @@ class ProductServiceTest {
         assertFalse(service.hasAvailability(saved.getId(), 5));
     }
 
+    @Test
+    void registersStockEntryAndPersistsUpdatedProduct() {
+        Category category = categories.save(new Category(null, "Food", ""));
+        Product saved = service.createProduct(new Product(null, "Rice", 3.5, 4, 2, category));
+
+        Product updated = service.registerStockEntry(saved.getId(), 3);
+
+        assertEquals(7, updated.getStock());
+        assertEquals(7, service.findProductById(saved.getId()).getStock());
+    }
+
+    @Test
+    void registersStockExitOnlyWhenEnoughStockExists() {
+        Category category = categories.save(new Category(null, "Food", ""));
+        Product saved = service.createProduct(new Product(null, "Rice", 3.5, 4, 2, category));
+
+        Product updated = service.registerStockExit(saved.getId(), 2);
+
+        assertEquals(2, updated.getStock());
+        assertThrows(IllegalArgumentException.class,
+                () -> service.registerStockExit(saved.getId(), 3));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.registerStockExit(saved.getId(), 0));
+    }
+
+    @Test
+    void identifiesProductsAtOrBelowMinimumStock() {
+        Category category = categories.save(new Category(null, "Food", ""));
+        Product low = service.createProduct(new Product(null, "Rice", 3.5, 2, 2, category));
+        service.createProduct(new Product(null, "Beans", 2.5, 8, 2, category));
+
+        assertTrue(service.hasLowStock(low.getId()));
+        assertEquals(1, service.findLowStockProducts().size());
+        assertThrows(IllegalArgumentException.class, () -> service.hasLowStock(999L));
+    }
+
+    @Test
+    void rejectsStockEntryThatWouldOverflowInteger() {
+        Category category = categories.save(new Category(null, "Food", ""));
+        Product saved = service.createProduct(
+                new Product(null, "Rice", 3.5, Integer.MAX_VALUE, 0, category));
+
+        assertThrows(ArithmeticException.class,
+                () -> service.registerStockEntry(saved.getId(), 1));
+        assertEquals(Integer.MAX_VALUE, service.findProductById(saved.getId()).getStock());
+    }
+
     private static class InMemoryCategoryRepository implements CategoryRepository {
         private final Map<Long, Category> data = new HashMap<>();
         private long nextId = 1;
