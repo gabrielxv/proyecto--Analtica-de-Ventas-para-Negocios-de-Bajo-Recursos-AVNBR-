@@ -14,7 +14,8 @@ public class Inventory {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
 
-        product.setStock(product.getStock() + quantity);
+        // Evita que una entrada excesiva desborde el entero y genere stock negativo.
+        product.setStock(Math.addExact(product.getStock(), quantity));
     }
 
     public void registerExit(Product product, int quantity) {

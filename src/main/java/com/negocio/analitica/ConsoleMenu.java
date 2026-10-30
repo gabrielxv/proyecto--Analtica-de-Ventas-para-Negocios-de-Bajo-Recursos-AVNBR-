@@ -43,6 +43,9 @@ public final class ConsoleMenu {
             System.out.println("5. Consultar información almacenada");
             System.out.println("6. Ver indicadores de ventas");
             System.out.println("7. Importar clientes desde archivo CSV");
+            System.out.println("8. Registrar entrada de inventario");
+            System.out.println("9. Registrar salida de inventario");
+            System.out.println("10. Consultar productos con stock bajo");
             System.out.println("0. Salir");
             try {
                 int opcion = leerEntero("Seleccione una opción: ");
@@ -54,6 +57,9 @@ public final class ConsoleMenu {
                     case 5 -> consultarDatos();
                     case 6 -> mostrarIndicadores();
                     case 7 -> importarClientesCsv();
+                    case 8 -> registrarEntradaInventario();
+                    case 9 -> registrarSalidaInventario();
+                    case 10 -> consultarStockBajo();
                     case 0 -> { continuar = false; System.out.println("Sesión finalizada. Los datos permanecen guardados."); }
                     default -> System.out.println("Opción no válida.");
                 }
@@ -83,6 +89,35 @@ public final class ConsoleMenu {
         int minimo = leerEntero("Stock mínimo: ");
         Product creado = products.createProduct(new Product(null, nombre, precio, stock, minimo, category));
         System.out.println("Producto guardado con ID " + creado.getId());
+    }
+
+    private void registrarEntradaInventario() {
+        long productId = leerLong("ID del producto: ");
+        int quantity = leerEntero("Cantidad que desea agregar: ");
+        Product updated = products.registerStockEntry(productId, quantity);
+        System.out.printf("Entrada registrada. Stock actual de %s: %d%n",
+                updated.getName(), updated.getStock());
+    }
+
+    private void registrarSalidaInventario() {
+        long productId = leerLong("ID del producto: ");
+        int quantity = leerEntero("Cantidad que desea retirar: ");
+        Product updated = products.registerStockExit(productId, quantity);
+        System.out.printf("Salida registrada. Stock actual de %s: %d%n",
+                updated.getName(), updated.getStock());
+    }
+
+    private void consultarStockBajo() {
+        List<Product> lowStock = products.getLowStockProducts();
+        if (lowStock.isEmpty()) {
+            System.out.println("No hay productos con stock bajo.");
+            return;
+        }
+        System.out.println("\\n--- PRODUCTOS CON STOCK BAJO ---");
+        lowStock.forEach(product -> System.out.printf(
+                "%d | %s | stock: %d | mínimo: %d%n",
+                product.getId(), product.getName(),
+                product.getStock(), product.getMinimumStock()));
     }
 
     private void registrarCliente() {
