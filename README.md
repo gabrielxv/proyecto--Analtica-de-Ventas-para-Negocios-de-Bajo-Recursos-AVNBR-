@@ -1,76 +1,64 @@
 # AVNBR — Análisis de Ventas para Negocios de Bajos Recursos
 
-Prototipo Java para apoyar a pequeños negocios en la gestión de categorías, productos, inventario, clientes y ventas, con indicadores básicos para consultar el comportamiento comercial.
+Sistema Java 17 para pequeños negocios: categorías, productos, inventario, clientes, ventas e indicadores comerciales.
+
+## Ejecución
+
+Requisitos: Java 17 y Maven 3.9 o superior.
+
+Desde la raíz del repositorio:
+
+```bash
+mvn clean verify
+mvn exec:java -Dexec.mainClass="com.negocio.analitica.Application"
+```
+
+La aplicación inicia un menú interactivo en consola. La base SQLite se crea automáticamente en `data/avnbr.db`; los registros se conservan al cerrar y volver a iniciar el programa. La carpeta `data/` está excluida de Git.
+
+## Funciones disponibles en el menú
+
+1. Registrar categorías.
+2. Registrar productos asociados a categorías.
+3. Registrar clientes.
+4. Registrar ventas con uno o varios productos; se valida el stock y se descuenta al confirmar.
+5. Consultar categorías, productos, clientes y ventas almacenados.
+6. Consultar ingresos, transacciones, unidades, ticket promedio, producto más vendido y alertas de stock bajo.
+7. Importar clientes desde un archivo CSV externo.
+
+### Formato CSV de clientes
+
+El archivo debe estar codificado en UTF-8, con encabezado y cuatro columnas en este orden:
+
+```csv
+nombre,documento,telefono,direccion
+Tienda Central,100200300,3001234567,Calle 10
+Minimercado La 12,100200301,3007654321,Carrera 12
+```
+
+Los documentos duplicados o las filas inválidas se rechazan sin detener toda la importación. Para esta versión, los campos no deben contener comas internas. Al elegir la opción 7, ingrese la ruta local del archivo.
 
 ## Arquitectura
 
-El flujo de responsabilidades sigue el patrón:
+`Consola → Controller → Service → Repository → SQLite`
 
-`Application / UI → Controller → Service → Repository → SQLite`
-
-- **Model:** representa las entidades del dominio.
-- **Controller:** coordina las operaciones solicitadas y delega en los servicios.
-- **Service:** aplica las reglas de negocio y coordina operaciones entre módulos.
-- **Repository:** separa las operaciones de datos de la lógica de negocio.
-- **Persistencia:** SQLite mediante JDBC, con almacenamiento local.
-
-El punto de entrada actual es una demostración de consola. Los controladores son clases Java de coordinación; el proyecto no debe describirse como una aplicación web desplegada ni como una API REST.
-
-## Responsabilidades del equipo
-
-- **Líder técnico:** arquitectura, contratos entre módulos, integración, calidad, pruebas y documentación.
-- **Desarrollador 1:** categorías, productos e inventario.
-- **Desarrollador 2:** clientes, ventas, detalles de venta y analítica.
-
-## Estado de integración y verificación
-
-- El PR #4 recuperó la arquitectura, la persistencia de productos/inventario, la configuración Maven, CI y las pruebas.
-- El PR #5 integró los módulos de clientes, ventas, detalles de venta y analítica.
-- El PR #6 corrigió documentación que no reflejaba el estado real de integración.
-- Los PR #4, #5 y #6 están fusionados en `main`.
-- La ejecución de Java CI revisada terminó correctamente: el job de pruebas finalizó con éxito y el paso de compilación y ejecución de pruebas apareció en verde.
-- El equipo informó que también realizó pruebas manuales. Los casos concretos y sus resultados no estaban detallados en este repositorio al momento de actualizar este documento; se recomienda conservar esa evidencia en una lista de verificación o acta de pruebas.
-
-La compilación y las pruebas automatizadas satisfactorias son evidencia de verificación técnica, pero no equivalen por sí solas a una certificación de todos los escenarios funcionales o de requisitos que no estén cubiertos por las pruebas.
-
-## Funcionalidades principales
-
-- Gestión de categorías y productos.
-- Validación de precio, existencias y stock mínimo.
-- Consulta de disponibilidad y actualización de inventario.
-- Registro y consulta de clientes.
-- Registro de ventas con uno o varios detalles.
-- Validación de cliente, cantidades, productos y stock disponible.
-- Cálculo de indicadores: total de ventas, transacciones, unidades, ticket promedio, producto más vendido, ventas por categoría y método de pago, productos con stock bajo y variación entre períodos.
-- Persistencia local de categorías, productos, clientes, ventas y detalles de venta.
+- **Model:** entidades del dominio.
+- **Controller:** coordinación de operaciones.
+- **Service:** validaciones y reglas de negocio.
+- **Repository:** contratos de persistencia.
+- **SQLite/JDBC:** almacenamiento local persistente.
 
 ## Tecnologías
 
 - Java 17
 - Maven
-- SQLite mediante JDBC
+- SQLite JDBC
 - JUnit 5
-- GitHub Actions para integración continua
+- GitHub Actions
 
-## Documentación
+## Verificación
 
-- [Arquitectura](docs/ARCHITECTURE.md)
-- [Contrato de integración](docs/INTEGRATION_CONTRACT.md)
-- [Normas Clean Code](docs/CLEAN_CODE.md)
-- [Implementación del Desarrollador 1](docs/DEV1_IMPLEMENTATION.md)
-- [Implementación del Desarrollador 2](docs/DEVELOPER_2_IMPLEMENTATION.md)
-- [Recuperación y persistencia](docs/RECOVERY_AND_PERSISTENCE.md)
+Ejecute `mvn clean verify` para compilar y ejecutar las pruebas automatizadas.
 
-## Verificación local
+## Alcance
 
-Desde la raíz del proyecto, ejecutar:
-
-```bash
-mvn clean verify
-```
-
-La base de datos local se crea en `data/avnbr.db` y no debe versionarse. Para una demostración, conviene comprobar el flujo completo: crear o consultar un cliente y un producto, registrar una venta, verificar el descuento de inventario y consultar los indicadores.
-
-## Alcance y mejoras futuras
-
-SQLite es apropiado para el prototipo local actual. Si el alcance exige varios usuarios concurrentes, acceso remoto o despliegue, debe evaluarse una base de datos centralizada y una capa de servicio apropiada. Otras mejoras posibles son hacer atómica la operación de venta y actualización de stock, revisar la representación monetaria y mantener actualizada la evidencia de pruebas.
+Esta entrega incorpora una interfaz interactiva de consola y carga externa CSV de clientes. No es todavía una aplicación web ni una API REST. SQLite funciona como base local de un solo entorno; para varios usuarios remotos se requiere una base centralizada y una capa de servicio desplegada.
