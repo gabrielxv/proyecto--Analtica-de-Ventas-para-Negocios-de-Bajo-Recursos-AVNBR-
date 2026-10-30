@@ -60,9 +60,9 @@ public class VentaService {
             // Compensación: si falla el registro, se intenta restaurar el stock previamente descontado.
             for(Product updated:actualizados) {
                 try {
-                    Product current=productService.findProductById(updated.getId());
+                    Product current=productOperations.findProductById(updated.getId());
                     current.setStock(current.getStock()+cantidades.get(updated.getId()));
-                    productService.updateProduct(current);
+                    productOperations.updateProduct(current);
                 } catch(RuntimeException rollbackError) {
                     error.addSuppressed(rollbackError);
                 }
