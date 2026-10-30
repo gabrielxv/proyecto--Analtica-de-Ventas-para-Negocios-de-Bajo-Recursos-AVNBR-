@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.Map;
 
 public class VentaService {
-    private final ClienteService clienteService;
-    private final ProductService productService;
+    private final ClienteLookup clienteLookup;
+    private final ProductOperations productOperations;
     private final VentaRepository ventaRepository;
 
-    public VentaService(ClienteService clienteService, ProductService productService, VentaRepository ventaRepository) {
-        if(clienteService==null || productService==null || ventaRepository==null)
+    public VentaService(ClienteLookup clienteLookup, ProductOperations productOperations, VentaRepository ventaRepository) {
+        if(clienteLookup==null || productOperations==null || ventaRepository==null)
             throw new IllegalArgumentException("Los servicios y el repositorio son obligatorios.");
-        this.clienteService=clienteService; this.productService=productService; this.ventaRepository=ventaRepository;
+        this.clienteLookup=clienteLookup; this.productOperations=productOperations; this.ventaRepository=ventaRepository;
     }
 
     public Venta registrar(Venta solicitud) {
         validarSolicitud(solicitud);
-        Cliente cliente=clienteService.buscarPorId(solicitud.getClienteId());
+        Cliente cliente=clienteLookup.buscarPorId(solicitud.getClienteId());
         Map<Long,Integer> cantidades=new LinkedHashMap<>();
         for(DetalleVenta d:solicitud.getDetalles()) {
             if(d==null || d.getProductoId()==null || d.getCantidad()<=0)
@@ -35,8 +35,8 @@ public class VentaService {
         List<DetalleVenta> detalles=new ArrayList<>();
         Map<Long,Product> productosOriginales=new LinkedHashMap<>();
         for(Map.Entry<Long,Integer> entry:cantidades.entrySet()) {
-            Product product=productService.findProductById(entry.getKey());
-            if(!productService.hasAvailability(product.getId(),entry.getValue()))
+            Product product=productOperations.findProductById(entry.getKey());
+            if(!productOperations.hasAvailability(product.getId(),entry.getValue()))
                 throw new IllegalArgumentException("Stock insuficiente para el producto: "+product.getName());
             productosOriginales.put(product.getId(),new Product(product.getId(),product.getName(),product.getPrice(),
                     product.getStock(),product.getMinimumStock(),product.getCategory()));
@@ -52,7 +52,7 @@ public class VentaService {
             for(Map.Entry<Long,Integer> entry:cantidades.entrySet()) {
                 Product product=productosOriginales.get(entry.getKey());
                 product.setStock(product.getStock()-entry.getValue());
-                productService.updateProduct(product);
+                productOperations.updateProduct(product);
                 actualizados.add(product);
             }
             return ventaRepository.save(venta);
