@@ -43,8 +43,8 @@ public final class ConsoleMenu {
             System.out.println("6. Ver indicadores de ventas");
             System.out.println("7. Importar clientes desde archivo CSV");
             System.out.println("0. Salir");
-            int opcion = leerEntero("Seleccione una opción: ");
             try {
+                int opcion = leerEntero("Seleccione una opción: ");
                 switch (opcion) {
                     case 1 -> registrarCategoria();
                     case 2 -> registrarProducto();
