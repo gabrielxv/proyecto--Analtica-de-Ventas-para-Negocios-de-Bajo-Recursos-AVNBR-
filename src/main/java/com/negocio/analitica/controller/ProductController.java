@@ -33,4 +33,16 @@ public class ProductController {
     public void deleteProduct(Long id) {
         productService.deleteProduct(id);
     }
+
+    public Product registerStockEntry(Long productId, int quantity) {
+        return productService.registerStockEntry(productId, quantity);
+    }
+
+    public Product registerStockExit(Long productId, int quantity) {
+        return productService.registerStockExit(productId, quantity);
+    }
+
+    public List<Product> getLowStockProducts() {
+        return productService.findLowStockProducts();
+    }
 }
