@@ -2,8 +2,6 @@ package com.negocio.analitica;
 
 import com.negocio.analitica.controller.*;
 import com.negocio.analitica.model.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +18,18 @@ public final class ConsoleMenu {
     private final ClienteController clientes;
     private final VentaController ventas;
     private final AnaliticaController analitica;
+    private final CsvClienteImporter csvClienteImporter;
 
     public ConsoleMenu(Scanner scanner, CategoryController categories, ProductController products,
-                       ClienteController clientes, VentaController ventas, AnaliticaController analitica) {
+                       ClienteController clientes, VentaController ventas, AnaliticaController analitica,
+                       CsvClienteImporter csvClienteImporter) {
         this.scanner = scanner;
         this.categories = categories;
         this.products = products;
         this.clientes = clientes;
         this.ventas = ventas;
         this.analitica = analitica;
+        this.csvClienteImporter = csvClienteImporter;
     }
 
     public void iniciar() {
@@ -144,30 +145,13 @@ public final class ConsoleMenu {
                 System.out.printf("- %s: %d unidades (mínimo %d)%n", p.getName(), p.getStock(), p.getMinimumStock()));
     }
 
-    /**
-     * CSV esperado: nombre,documento,telefono,direccion
-     * La primera fila se considera encabezado. Use UTF-8 y campos sin comas internas.
-     */
+    /** La lectura del archivo está delegada al importador especializado. */
     private void importarClientesCsv() {
         String ruta = leerTexto("Ruta del archivo CSV: ");
-        try {
-            List<String> lineas = Files.readAllLines(Path.of(ruta));
-            int importados = 0;
-            int rechazados = 0;
-            for (int i = 1; i < lineas.size(); i++) {
-                if (lineas.get(i).isBlank()) continue;
-                String[] campos = lineas.get(i).split(",", -1);
-                if (campos.length != 4) { rechazados++; continue; }
-                try {
-                    clientes.crear(new Cliente(null, campos[0].trim(), campos[1].trim(),
-                            campos[2].trim(), campos[3].trim()));
-                    importados++;
-                } catch (RuntimeException ex) { rechazados++; }
-            }
-            System.out.printf("Importación terminada. Guardados: %d | Rechazados: %d%n", importados, rechazados);
-        } catch (java.io.IOException ex) {
-            throw new IllegalArgumentException("No se pudo leer el archivo: " + ex.getMessage(), ex);
-        }
+        CsvClienteImporter.ResultadoImportacion resultado =
+                csvClienteImporter.importar(java.nio.file.Path.of(ruta));
+        System.out.printf("Importación terminada. Guardados: %d | Rechazados: %d%n",
+                resultado.importados(), resultado.rechazados());
     }
 
     private String leerTexto(String mensaje) {

@@ -31,7 +31,9 @@ public final class Application {
 
         System.out.println("Base de datos local lista: data/avnbr.db");
         try (Scanner scanner = new Scanner(System.in)) {
-            new ConsoleMenu(scanner, categories, products, clientes, ventas, analitica).iniciar();
+            CsvClienteImporter csvClienteImporter = new CsvClienteImporter(clientes);
+            new ConsoleMenu(scanner, categories, products, clientes, ventas, analitica,
+                    csvClienteImporter).iniciar();
         }
     }
 }
