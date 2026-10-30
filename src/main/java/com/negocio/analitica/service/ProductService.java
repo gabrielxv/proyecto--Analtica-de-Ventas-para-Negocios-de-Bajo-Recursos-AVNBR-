@@ -6,7 +6,7 @@ import com.negocio.analitica.repository.CategoryRepository;
 import com.negocio.analitica.repository.ProductRepository;
 import java.util.List;
 
-public class ProductService {
+public class ProductService implements ProductOperations {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
