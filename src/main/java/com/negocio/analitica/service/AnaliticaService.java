@@ -13,10 +13,10 @@ import java.util.Optional;
 
 public class AnaliticaService {
     private final VentaRepository ventaRepository;
-    private final ProductService productService;
-    public AnaliticaService(VentaRepository ventaRepository, ProductService productService) {
-        if(ventaRepository==null || productService==null) throw new IllegalArgumentException("Dependencias obligatorias.");
-        this.ventaRepository=ventaRepository; this.productService=productService;
+    private final ProductOperations productOperations;
+    public AnaliticaService(VentaRepository ventaRepository, ProductOperations productOperations) {
+        if(ventaRepository==null || productOperations==null) throw new IllegalArgumentException("Dependencias obligatorias.");
+        this.ventaRepository=ventaRepository; this.productOperations=productOperations;
     }
     public List<Venta> ventasEntre(LocalDate desde, LocalDate hasta) {
         return ventaRepository.findByPeriod(desde,hasta);
@@ -52,7 +52,7 @@ public class AnaliticaService {
         return Map.copyOf(result);
     }
     public List<Product> productosConStockBajo() {
-        return productService.findAllProducts().stream()
+        return productOperations.findAllProducts().stream()
                 .filter(p->p.getStock()<=p.getMinimumStock())
                 .sorted(Comparator.comparing(Product::getName)).toList();
     }
